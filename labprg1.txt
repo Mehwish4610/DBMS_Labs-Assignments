@@ -1,0 +1,251 @@
+Microsoft Windows [Version 10.0.22621.2861]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\MEHWISH>cd/
+
+C:\>cd xampp
+
+C:\xampp>cd mysql
+
+C:\xampp\mysql>cd bin
+
+C:\xampp\mysql\bin>m
+'m' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\xampp\mysql\bin>mysql -u root -p -h 127.0.0.1
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 118
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| cse                |
+| information_schema |
+| library            |
+| mysql              |
+| orders             |
+| performance_schema |
+| phpmyadmin         |
+| test               |
+| xyz                |
++--------------------+
+9 rows in set (0.002 sec)
+
+MariaDB [(none)]> use library;
+Database changed
+MariaDB [library]> show tables;
++-------------------+
+| Tables_in_library |
++-------------------+
+| book              |
+| book_authors      |
+| book_copies       |
+| book_lending      |
+| books_avail       |
+| library_programme |
+| p1                |
+| publisher         |
++-------------------+
+8 rows in set (0.001 sec)
+
+MariaDB [library]> select * from book;
++---------+-------+----------------+------------+
+| BOOK_ID | TITLE | PUBLISHER_NAME | PUB_YEAR   |
++---------+-------+----------------+------------+
+|       1 | DBMS  | MC GRAW HILL   | 2012-05-01 |
+|       2 | ADBMS | PEARSON        | 2015-03-09 |
+|       3 | CN    | RANDOM HOUSE   | 2016-01-05 |
++---------+-------+----------------+------------+
+3 rows in set (0.001 sec)
+
+MariaDB [library]> select * from book_authors;
++---------+-------------+
+| BOOK_ID | AUTHOR_NAME |
++---------+-------------+
+|       1 | NAVATHE     |
+|       2 | JHON        |
++---------+-------------+
+2 rows in set (0.001 sec)
+
+MariaDB [library]> select * from book_copies;
++---------+--------------+--------------+
+| BOOK_ID | PROGRAMME_ID | NO_OF_COPIES |
++---------+--------------+--------------+
+|       1 |           10 |           50 |
+|       2 |           11 |           20 |
++---------+--------------+--------------+
+2 rows in set (0.001 sec)
+
+MariaDB [library]> select * from book_lending;
++---------+--------------+---------+------------+------------+
+| BOOK_ID | PROGRAMME_ID | CARD_NO | DATE_OUT   | DUE_DATE   |
++---------+--------------+---------+------------+------------+
+|       1 |           10 |     110 | 2017-01-01 | 2017-01-15 |
+|       1 |           12 |     123 | 2017-09-15 | 2017-10-25 |
+|       1 |           12 |     124 | 2017-02-01 | 2017-02-10 |
+|       2 |           11 |     122 | 2017-05-01 | 2017-05-15 |
+|       2 |           11 |     124 | 2017-02-15 | 2017-03-25 |
+|       3 |           11 |     124 | 2017-02-15 | 2017-03-05 |
+|       3 |           12 |     124 | 2017-02-01 | 2017-02-10 |
++---------+--------------+---------+------------+------------+
+7 rows in set (0.001 sec)
+
+MariaDB [library]> select * from publisher;
++--------------+----------+------------+
+| NAME         | Address  | Phone      |
++--------------+----------+------------+
+| MC GRAW HILL | BANGLORE | 9874125632 |
+| PEARSON      | MYSORE   | 1245789632 |
+| RANDOM HOUSE | MYSORE   | 9988774455 |
++--------------+----------+------------+
+3 rows in set (0.001 sec)
+
+MariaDB [library]> select * from library_programme;
++--------------+----------------+---------+
+| PROGRAMME_ID | PROGRAMME_NAME | ADDRESS |
++--------------+----------------+---------+
+|           10 | CSE            | MYSORE  |
+|           11 | ISE            | MYSORE  |
+|           12 | ECE            | MYSORE  |
++--------------+----------------+---------+
+3 rows in set (0.001 sec)
+
+MariaDB [library]> desc book;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| BOOK_ID        | int(11)     | NO   | PRI | NULL    |       |
+| TITLE          | varchar(50) | YES  |     | NULL    |       |
+| PUBLISHER_NAME | varchar(20) | YES  | MUL | NULL    |       |
+| PUB_YEAR       | date        | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.004 sec)
+
+MariaDB [library]> desc library_programme;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| PROGRAMME_ID   | int(11)     | NO   | PRI | NULL    |       |
+| PROGRAMME_NAME | varchar(40) | YES  |     | NULL    |       |
+| ADDRESS        | varchar(40) | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+3 rows in set (0.013 sec)
+
+MariaDB [library]> desc publisher;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| NAME    | varchar(40)  | NO   | PRI | NULL    |       |
+| Address | varchar(100) | YES  |     | NULL    |       |
+| Phone   | varchar(20)  | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+3 rows in set (0.005 sec)
+
+MariaDB [library]> desc book_lending;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| BOOK_ID      | int(11) | NO   | PRI | NULL    |       |
+| PROGRAMME_ID | int(11) | NO   | PRI | NULL    |       |
+| CARD_NO      | int(11) | NO   | PRI | NULL    |       |
+| DATE_OUT     | date    | YES  |     | NULL    |       |
+| DUE_DATE     | date    | YES  |     | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+5 rows in set (0.011 sec)
+
+MariaDB [library]> desc book_copies;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| BOOK_ID      | int(11) | NO   | PRI | NULL    |       |
+| PROGRAMME_ID | int(11) | NO   | PRI | NULL    |       |
+| NO_OF_COPIES | int(11) | YES  |     | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+3 rows in set (0.004 sec)
+
+MariaDB [library]> desc book_authors;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| BOOK_ID     | int(11)     | NO   | PRI | NULL    |       |
+| AUTHOR_NAME | varchar(40) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+2 rows in set (0.012 sec)
+
+MariaDB [library]> desc book;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| BOOK_ID        | int(11)     | NO   | PRI | NULL    |       |
+| TITLE          | varchar(50) | YES  |     | NULL    |       |
+| PUBLISHER_NAME | varchar(20) | YES  | MUL | NULL    |       |
+| PUB_YEAR       | date        | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.003 sec)
+
+MariaDB [library]> SELECT B.BOOK_ID, B.TITLE, B.PUBLISHER_NAME, A.AUTHOR_NAME, C.NO_OF_COPIES
+    -> FROM BOOK B
+    -> JOIN BOOK_AUTHORS A ON B.BOOK_ID = A. BOOK_ID
+    -> JOIN BOOK_COPIES C ON B.BOOK_ID = C.BOOK_ID
+    -> JOIN LIBRARY_PROGRAMME L ON C.PROGRAMME_ID = L.PROGRAMME_ID
+    -> GROUP BY B.BOOK_ID, B.TITLE, B.PUBLISHER_NAME, A.AUTHOR_NAME, C.NO_OF_COPIES;
++---------+-------+----------------+-------------+--------------+
+| BOOK_ID | TITLE | PUBLISHER_NAME | AUTHOR_NAME | NO_OF_COPIES |
++---------+-------+----------------+-------------+--------------+
+|       1 | DBMS  | MC GRAW HILL   | NAVATHE     |           50 |
+|       2 | ADBMS | PEARSON        | JHON        |           20 |
++---------+-------+----------------+-------------+--------------+
+2 rows in set (0.001 sec)
+
+MariaDB [library]> SELECT CARD_NO
+    -> FROM BOOK_LENDING
+    -> WHERE DATE_OUT BETWEEN '2017-01-01' AND '2017-06-30'
+    -> GROUP BY CARD_NO
+    -> HAVING COUNT(*)>3;
++---------+
+| CARD_NO |
++---------+
+|     124 |
++---------+
+1 row in set (0.001 sec)
+
+MariaDB [library]> CREATE VIEW P1 AS SELECT * FROM BOOK
+    -> WHERE PUB_YEAR BETWEEN '2014-01-01' AND '2018-12-30';
+Query OK, 0 rows affected (0.007 sec)
+
+MariaDB [library]> SELECT * FROM P1;
++---------+-------+----------------+------------+
+| BOOK_ID | TITLE | PUBLISHER_NAME | PUB_YEAR   |
++---------+-------+----------------+------------+
+|       3 | CN    | RANDOM HOUSE   | 2016-01-05 |
++---------+-------+----------------+------------+
+1 row in set (0.001 sec)
+
+MariaDB [library]> DROP VIEW BOOKS_AVAIL;
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [library]> CREATE VIEW BOOKS_AVAIL AS
+    -> SELECT B.BOOK_ID, TITLE, C.NO_OF_COPIES
+    -> FROM BOOK B, BOOK_COPIES C
+    -> WHERE B.BOOK_ID = C.BOOK_ID;
+Query OK, 0 rows affected (0.004 sec)
+
+MariaDB [library]> SELECT * FROM BOOKS_AVAIL;
++---------+-------+--------------+
+| BOOK_ID | TITLE | NO_OF_COPIES |
++---------+-------+--------------+
+|       1 | DBMS  |           50 |
++---------+-------+--------------+
+1 row in set (0.002 sec)
+
+MariaDB [library]>
+MariaDB [library]> EXIT
+Bye
