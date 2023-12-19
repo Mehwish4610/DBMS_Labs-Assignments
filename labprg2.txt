@@ -1,0 +1,208 @@
+Microsoft Windows [Version 10.0.22621.2861]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\MEHWISH>CD/
+
+C:\>cd xampp
+
+C:\xampp>cd mysql
+
+C:\xampp\mysql>cd bin
+
+C:\xampp\mysql\bin>mysql -u root -p -h 127.0.0.1
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 51
+Server version: 10.4.32-MariaDB mariadb.org binary distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> use orders;
+Database changed
+
+-- TABLES
+
+MariaDB [orders]> select * from salesman;
++-------------+---------+----------+------------+
+| Salesman_id | Name    | City     | Commission |
++-------------+---------+----------+------------+
+|         101 | Jhon    | Mysore   |         50 |
+|         102 | Sufiya  | Banglore |         25 |
+|         103 | Suhani  | Banglore |         75 |
+|         104 | Hajeera | Mysore   |         10 |
++-------------+---------+----------+------------+
+4 rows in set (0.000 sec)
+
+MariaDB [orders]> select * from customer;
++-------------+-----------+-------------+-------+-------------+
+| Customer_id | Cust_Name | City        | Grade | Salesman_id |
++-------------+-----------+-------------+-------+-------------+
+|           1 | Ganesh    | Mandya      |     2 |         101 |
+|           2 | Nabha     | KushalNagar |     1 |         102 |
+|           3 | Nouman    | Mysore      |     3 |         103 |
+|           4 | Nawal     | Banglore    |     1 |         104 |
+|           5 | Jaffar    | Banglore    |     1 |         101 |
++-------------+-----------+-------------+-------+-------------+
+5 rows in set (0.000 sec)
+
+MariaDB [orders]> select * from orders;
++--------+--------------+------------+-------------+-------------+
+| Ord_No | Purchase_Amt | Ord_Date   | Customer_id | Salesman_id |
++--------+--------------+------------+-------------+-------------+
+|      1 |         4500 | 2021-12-15 |           1 |         101 |
+|      2 |        10500 | 2022-11-20 |           2 |         102 |
+|   1002 |         1500 | 2023-11-20 |           3 |         103 |
+|   1190 |         2500 | 2023-09-20 |           4 |         104 |
++--------+--------------+------------+-------------+-------------+
+4 rows in set (0.001 sec)
+
+--QUERIES
+-- SQL QUERY 1
+
+MariaDB [orders]> SELECT COUNT(CUSTOMER_ID)
+    -> FROM CUSTOMER
+    -> WHERE GRADE>(SELECT AVG(GRADE) FROM CUSTOMER WHERE CITY='Banglore');
++--------------------+
+| COUNT(CUSTOMER_ID) |
++--------------------+
+|                  2 |
++--------------------+
+1 row in set (0.000 sec)
+
+-- SQL QUERY 2
+
+MariaDB [orders]> SELECT Name, S.Salesman_id, COUNT(Customer_id)
+    -> FROM SALESMAN S, CUSTOMER C
+    -> WHERE S.Salesman_id = C.Salesman_id
+    -> GROUP BY Name
+    -> HAVING COUNT(Customer_id)>1
+    -> ;
++------+-------------+--------------------+
+| Name | Salesman_id | COUNT(Customer_id) |
++------+-------------+--------------------+
+| Jhon |         101 |                  2 |
++------+-------------+--------------------+
+1 row in set (0.001 sec)
+
+-- SQL QUERY 3
+
+MariaDB [orders]> SELECT Name
+    -> FROM SALESMAN S, CUSTOMER C
+    -> WHERE S.Salesman_id = C.Salesman_id AND S.City = C.City
+    -> UNION
+    -> SELECT Name
+    -> FROM SALESMAN
+    -> WHERE Salesman_id NOT IN (SELECT S.Salesman_id FROM SALESMAN S, CUSTOMER C
+    -> WHERE S.Salesman_id = C.Salesman_id AND S.City = C.City);
++---------+
+| Name    |
++---------+
+| Jhon    |
+| Sufiya  |
+| Suhani  |
+| Hajeera |
++---------+
+4 rows in set (0.001 sec)
+
+-- SQL QUERY 4
+
+MariaDB [orders]> insert into orders values(1108,5908,'2021-12-15',005,101);
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [orders]> CREATE VIEW HighOrder AS
+    -> SELECT Salesman_id, Customer_id, Purchase_Amt, Ord_Date
+    -> FROM ORDERS X
+    -> WHERE Purchase_Amt = (
+    -> SELECT MAX(Purchase_Amt)
+    -> FROM ORDERS Y
+    -> WHERE X.Ord_Date = Y.Ord_Date);
+Query OK, 0 rows affected (0.005 sec)
+
+MariaDB [orders]> Select * from HighOrder;
++-------------+-------------+--------------+------------+
+| Salesman_id | Customer_id | Purchase_Amt | Ord_Date   |
++-------------+-------------+--------------+------------+
+|         102 |           2 |        10500 | 2022-11-20 |
+|         103 |           3 |         1500 | 2023-11-20 |
+|         101 |           5 |         5908 | 2021-12-15 |
+|         104 |           4 |         2500 | 2023-09-20 |
++-------------+-------------+--------------+------------+
+4 rows in set (0.001 sec)
+
+-- SQL QUERY 5
+
+MariaDB [orders]> DELETE FROM SALESMAN WHERE Salesman_id = 104 ;
+Query OK, 1 row affected (0.009 sec)
+
+MariaDB [orders]> select * from salesman;
++-------------+--------+----------+------------+
+| Salesman_id | Name   | City     | Commission |
++-------------+--------+----------+------------+
+|         101 | Jhon   | Mysore   |         50 |
+|         102 | Sufiya | Banglore |         25 |
+|         103 | Suhani | Banglore |         75 |
++-------------+--------+----------+------------+
+3 rows in set (0.001 sec)
+
+MariaDB [orders]> select * from customer;
++-------------+-----------+-------------+-------+-------------+
+| Customer_id | Cust_Name | City        | Grade | Salesman_id |
++-------------+-----------+-------------+-------+-------------+
+|           1 | Ganesh    | Mandya      |     2 |         101 |
+|           2 | Nabha     | KushalNagar |     1 |         102 |
+|           3 | Nouman    | Mysore      |     3 |         103 |
+|           4 | Nawal     | Banglore    |     1 |        NULL |
+|           5 | Jaffar    | Banglore    |     1 |         101 |
++-------------+-----------+-------------+-------+-------------+
+5 rows in set (0.001 sec)
+
+MariaDB [orders]> select * from orders;
++--------+--------------+------------+-------------+-------------+
+| Ord_No | Purchase_Amt | Ord_Date   | Customer_id | Salesman_id |
++--------+--------------+------------+-------------+-------------+
+|      1 |         4500 | 2021-12-15 |           1 |         101 |
+|      2 |        10500 | 2022-11-20 |           2 |         102 |
+|   1002 |         1500 | 2023-11-20 |           3 |         103 |
+|   1108 |         5908 | 2021-12-15 |           5 |         101 |
++--------+--------------+------------+-------------+-------------+
+4 rows in set (0.001 sec)
+
+-- TABLES SCHEMA
+
+MariaDB [orders]> desc salesman;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Salesman_id | int(11)     | NO   | PRI | NULL    |       |
+| Name        | varchar(25) | NO   |     | NULL    |       |
+| City        | varchar(15) | NO   |     | NULL    |       |
+| Commission  | float       | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+4 rows in set (0.010 sec)
+
+MariaDB [orders]> desc customer;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Customer_id | int(11)     | NO   | PRI | NULL    |       |
+| Cust_Name   | varchar(25) | NO   |     | NULL    |       |
+| City        | varchar(15) | NO   |     | NULL    |       |
+| Grade       | int(11)     | NO   |     | NULL    |       |
+| Salesman_id | int(11)     | YES  | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+5 rows in set (0.004 sec)
+
+MariaDB [orders]> desc orders;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| Ord_No       | int(11) | NO   | PRI | NULL    |       |
+| Purchase_Amt | int(11) | NO   |     | NULL    |       |
+| Ord_Date     | date    | NO   |     | NULL    |       |
+| Customer_id  | int(11) | YES  | MUL | NULL    |       |
+| Salesman_id  | int(11) | YES  | MUL | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+5 rows in set (0.010 sec)
+
