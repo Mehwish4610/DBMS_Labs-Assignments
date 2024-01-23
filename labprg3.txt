@@ -1,0 +1,196 @@
+QUERY 1:
+MariaDB [movies]> SELECT Mov_Title
+    -> FROM MOVIES
+    -> WHERE Dir_id IN (SELECT Dir_id FROM DIRECTOR WHERE Dir_Name = 'Alfred Hitchcock');
++---------------------+
+| Mov_Title           |
++---------------------+
+| Family Plot         |
+| Lord Cambers Ladies |
++---------------------+
+2 rows in set (0.000 sec)
+
+QUERY 3:
+MariaDB [movies]> SELECT Act_Name
+    -> FROM (ACTOR A JOIN MOVIE_CAST C ON A.Act_id = C.Act_id) JOIN MOVIES M ON
+    -> C.Mov_id = M.Mov_id
+    -> WHERE M.Mov_Year < 2000 AND Act_Name IN (
+    -> SELECT Act_Name
+    -> FROM (ACTOR A JOIN MOVIE_CAST C ON A.Act_id = C.Act_id) JOIN MOVIES
+    -> M ON C.Mov_id = M.Mov_id
+    -> WHERE M.Mov_Year > 2015);
++-------------------+
+| Act_Name          |
++-------------------+
+| Michelle Williams |
++-------------------+
+1 row in set (0.001 sec)
+
+QUERY2:
+MariaDB [movies]> SELECT Mov_Title
+    -> FROM MOVIES M, MOVIE_CAST C
+    -> WHERE M.Mov_id = C.Mov_id AND Act_id IN (
+    -> SELECT Act_id
+    -> FROM MOVIE_CAST
+    -> GROUP BY Act_id
+    -> HAVING COUNT(Act_id) > 1 )
+    -> ;
++---------------------+
+| Mov_Title           |
++---------------------+
+| Saving Private Ryan |
+| The Fabelmans       |
++---------------------+
+2 rows in set (0.000 sec)
+
+QUERY 4:
+MariaDB [movies]> SELECT M.Mov_Title, COUNT(R.Rev_Stars) AS NumStars, MAX(R.Rev_Stars) AS HighestStars
+    -> FROM MOVIES M
+    -> JOIN RATING R ON M.Mov_id = R.Mov_id
+    -> GROUP BY M.Mov_Title
+    -> HAVING COUNT(R.Rev_Stars) > 0
+    -> ORDER BY M.Mov_Title;
++---------------------+----------+--------------+
+| Mov_Title           | NumStars | HighestStars |
++---------------------+----------+--------------+
+| Family Plot         |        1 |            3 |
+| Lord Cambers Ladies |        1 |            4 |
+| Saving Private Ryan |        1 |            2 |
+| The Fabelmans       |        1 |            4 |
++---------------------+----------+--------------+
+4 rows in set (0.000 sec)
+
+MariaDB [movies]>
+MariaDB [movies]> UPDATE RATING
+    -> SET Rev_Stars = 5
+    -> WHERE Mov_id IN (SELECT Mov_id FROM MOVIES WHERE Dir_id IN (SELECT Dir_id FROM DIRECTOR WHERE Dir_Name = 'Steven Spielberg'));
+Query OK, 2 rows affected (0.009 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+QUERY 5:
+MariaDB [movies]> select * from rating;
++--------+-----------+
+| Mov_id | Rev_Stars |
++--------+-----------+
+|      1 |         3 |
+|      2 |         4 |
+|      3 |         5 |
+|      4 |         5 |
++--------+-----------+
+4 rows in set (0.000 sec)
+
+MariaDB [movies]> SELECT * FROM ACTOR;
++--------+-------------------+------------+
+| Act_id | Act_Name          | Act_Gender |
++--------+-------------------+------------+
+|    201 | Michelle Williams | F          |
+|    202 | Paul Dano         | M          |
+|   6301 | Tom Hanks         | M          |
+|   6302 | Edward Burns      | M          |
+|   7401 | Gerald du Maurier | M          |
+|   7402 | Gertrude Lawrence | F          |
+|   7403 | Benita Hume       | F          |
+|   7404 | Karen Black       | F          |
+|   7405 | Bruce Dern        | M          |
++--------+-------------------+------------+
+9 rows in set (0.000 sec)
+
+MariaDB [movies]> SELECT * FROM DIRECTOR;
++--------+------------------+------------+
+| Dir_id | Dir_Name         | Dir_Phone  |
++--------+------------------+------------+
+|      1 | Alfred Hitchcock | 9874563219 |
+|      2 | Steven Spielberg | 9685741239 |
++--------+------------------+------------+
+2 rows in set (0.000 sec)
+
+MariaDB [movies]> SELECT * FROM MOVIES;
++--------+---------------------+----------+----------+--------+
+| Mov_id | Mov_Title           | Mov_Year | Mov_Lang | Dir_id |
++--------+---------------------+----------+----------+--------+
+|      1 | Family Plot         |     1976 | English  |      1 |
+|      2 | Lord Cambers Ladies |     1932 | English  |      1 |
+|      3 | Saving Private Ryan |     1998 | English  |      2 |
+|      4 | The Fabelmans       |     2022 | English  |      2 |
++--------+---------------------+----------+----------+--------+
+4 rows in set (0.000 sec)
+
+MariaDB [movies]> SELECT * FROM MOVIE_CAST;
++--------+--------+-----------------+
+| Act_id | Mov_id | Role            |
++--------+--------+-----------------+
+|    201 |      3 | Mother          |
+|    201 |      4 | Father          |
+|    202 |      4 | Mother          |
+|   6301 |      3 | Captain sufferi |
+|   6302 |      3 | Soldier         |
+|   7401 |      2 | Doctor          |
+|   7402 |      2 | Lady Camber     |
+|   7403 |      2 | Janet King      |
+|   7404 |      1 | Fran            |
+|   7405 |      1 | George Lumley   |
++--------+--------+-----------------+
+10 rows in set (0.000 sec)
+
+MariaDB [movies]> SELECT * FROM RATING;
++--------+-----------+
+| Mov_id | Rev_Stars |
++--------+-----------+
+|      1 |         3 |
+|      2 |         4 |
+|      3 |         5 |
+|      4 |         5 |
++--------+-----------+
+4 rows in set (0.000 sec)
+
+
+MariaDB [movies]> DESC ACTOR;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| Act_id     | int(11)     | NO   | PRI | NULL    |       |
+| Act_Name   | varchar(25) | NO   |     | NULL    |       |
+| Act_Gender | char(1)     | NO   |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+3 rows in set (0.011 sec)
+
+MariaDB [movies]> DESC DIRECTOR;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| Dir_id    | int(11)     | NO   | PRI | NULL    |       |
+| Dir_Name  | varchar(25) | NO   |     | NULL    |       |
+| Dir_Phone | char(10)    | NO   |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+3 rows in set (0.010 sec)
+
+MariaDB [movies]> DESC MOVIES;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| Mov_id    | int(11)     | NO   | PRI | NULL    |       |
+| Mov_Title | varchar(50) | NO   |     | NULL    |       |
+| Mov_Year  | year(4)     | NO   |     | NULL    |       |
+| Mov_Lang  | varchar(15) | NO   |     | NULL    |       |
+| Dir_id    | int(11)     | NO   | MUL | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.011 sec)
+
+MariaDB [movies]> DESC MOVIE_CAST;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| Act_id | int(11)     | NO   | PRI | NULL    |       |
+| Mov_id | int(11)     | NO   | PRI | NULL    |       |
+| Role   | varchar(15) | NO   |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.009 sec)
+
+MariaDB [movies]> DESC RATING;
++-----------+---------+------+-----+---------+-------+
+| Field     | Type    | Null | Key | Default | Extra |
++-----------+---------+------+-----+---------+-------+
+| Mov_id    | int(11) | YES  | MUL | NULL    |       |
+| Rev_Stars | int(1)  | NO   |     | NULL    |       |
++-----------+---------+------+-----+---------+-------+
+2 rows in set (0.002 sec)
