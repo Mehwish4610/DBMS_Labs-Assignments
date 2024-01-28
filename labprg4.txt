@@ -1,0 +1,209 @@
+MariaDB [college]> show tables;
++-------------------+
+| Tables_in_college |
++-------------------+
+| class             |
+| course            |
+| iamarks           |
+| semsec            |
+| student           |
++-------------------+
+5 rows in set (0.000 sec)
+QUERY 1:
+MariaDB [college]> SELECT *
+    -> FROM STUDENT S, SEMSEC SS, CLASS C
+    -> WHERE S.USN = C.USN AND SS.SSID = C.SSID AND Sem = 4 AND Sec = 'C';
++------------+--------------+-------------+------------+--------+------+-----+-----+------------+------+
+| USN        | SName        | Address     | Phone      | Gender | SSID | Sem | Sec | USN        | SSID |
++------------+--------------+-------------+------------+--------+------+-----+-----+------------+------+
+| 4MH21CS055 | NOUMAN       | MYSOREE     | 9874563219 | M      |  412 |   4 | C   | 4MH21CS055 |  412 |
+| 4MH21CS057 | NABHA NADIYA | KUSHALNAGAR | 9632587419 | F      |  415 |   4 | C   | 4MH21CS057 |  415 |
++------------+--------------+-------------+------------+--------+------+-----+-----+------------+------+
+2 rows in set (0.010 sec)
+
+QUERY 2:
+MariaDB [college]> SELECT Sem, Sec, Gender, COUNT(*)
+    -> FROM STUDENT S, SEMSEC SS, CLASS C
+    -> WHERE S.USN = C.USN AND SS.SSID = C.SSID
+    -> GROUP BY Sem, Sec, Gender
+    -> ;
++-----+-----+--------+----------+
+| Sem | Sec | Gender | COUNT(*) |
++-----+-----+--------+----------+
+|   3 | B   | F      |        1 |
+|   4 | C   | F      |        1 |
+|   4 | C   | M      |        1 |
+|   5 | A   | F      |        2 |
++-----+-----+--------+----------+
+4 rows in set (0.010 sec)
+
+QUERY 3:
+MariaDB [college]> create view 4MH21CS050 AS
+    -> SELECT SUBCODE, TEST1
+    -> FROM IAMARKS
+    -> WHERE USN= '4MH21CS050'
+    -> ;
+Query OK, 0 rows affected (0.011 sec)
+
+MariaDB [college]> SELECT * FROM 4MH21CS050;
++---------+-------+
+| SUBCODE | TEST1 |
++---------+-------+
+| 21CS51  |    30 |
+| 21CS53  |    30 |
++---------+-------+
+2 rows in set (0.003 sec)
+
+QUERY 4:
+MariaDB [college]> UPDATE IAMARKS
+    -> SET FinalIA = GREATEST(Test1+Test2, Test2+Test3,Test1+Test3)/2;
+Query OK, 6 rows affected (0.012 sec)
+Rows matched: 6  Changed: 6  Warnings: 0
+
+MariaDB [college]> SELECT * FROM IAMARKS;
++------------+---------+------+-------+-------+-------+---------+
+| USN        | Subcode | SSID | Test1 | Test2 | Test3 | FinalIA |
++------------+---------+------+-------+-------+-------+---------+
+| 4MH21CS050 | 21CS51  |  101 |    30 |    30 |    30 |      30 |
+| 4MH21CS050 | 21CS53  |  101 |    30 |    30 |    29 |      30 |
+| 4MH21CS055 | 21CS41  |  412 |    30 |    29 |    27 |    29.5 |
+| 4MH21CS057 | 21CS41  |  415 |    20 |    21 |    25 |      23 |
+| 4MH21CS102 | 21CS51  |  985 |    28 |    29 |    27 |    28.5 |
+| 4MH21CS102 | 21CS53  |  985 |    25 |    26 |    22 |    25.5 |
++------------+---------+------+-------+-------+-------+---------+
+6 rows in set (0.004 sec)
+
+QUERY 5:
+
+MariaDB [COLLEGE]> SELECT
+    ->     S.USN,
+    ->     S.Sname,
+    ->     SS.Sem,
+    ->     SS.Sec,
+    ->     M.Subcode,
+    ->     M.FinalIA,
+    ->     CASE
+    ->         WHEN M.FinalIA BETWEEN 27 AND 30 THEN 'Outstanding'
+    ->         WHEN M.FinalIA BETWEEN 20 AND 26 THEN 'Average'
+    ->         WHEN M.FinalIA < 15 THEN 'Weak'
+    ->         ELSE 'NA'
+    ->     END AS Category
+    -> FROM
+    ->     STUDENT S,
+    ->     IAMARKS M,
+    ->     SEMSEC SS
+    -> WHERE
+    ->     S.USN = M.USN AND
+    ->     SS.SSID = M.SSID AND
+    ->     SS.Sem = 5;
++------------+---------------+-----+-----+---------+---------+-------------+
+| USN        | Sname         | Sem | Sec | Subcode | FinalIA | Category    |
++------------+---------------+-----+-----+---------+---------+-------------+
+| 4MH21CS050 | MEHWISH       |   5 | A   | 21CS51  |      30 | Outstanding |
+| 4MH21CS050 | MEHWISH       |   5 | A   | 21CS53  |      30 | Outstanding |
+| 4MH21CS102 | SUFIIYA SALAM |   5 | A   | 21CS51  |    28.5 | Outstanding |
+| 4MH21CS102 | SUFIIYA SALAM |   5 | A   | 21CS53  |    25.5 | Average     |
++------------+---------------+-----+-----+---------+---------+-------------+
+4 rows in set (0.001 sec)
+
+MariaDB [college]> SELECT * FROM CLASS;
++------------+------+
+| USN        | SSID |
++------------+------+
+| 4MH21CS050 |  101 |
+| 4MH21CS055 |  412 |
+| 4MH21CS057 |  415 |
+| 4MH21CS030 |  856 |
+| 4MH21CS102 |  985 |
++------------+------+
+5 rows in set (0.000 sec)
+
+MariaDB [college]> SELECT * FROM COURSE;
++---------+-------+------+---------+
+| Subcode | Title | Sem  | CREDITS |
++---------+-------+------+---------+
+| 21CS41  | M4    |    4 |       3 |
+| 21CS51  | ATC   |    5 |       3 |
+| 21CS53  | DBMS  |    5 |       4 |
++---------+-------+------+---------+
+3 rows in set (0.000 sec)
+
+MariaDB [college]> SELECT * FROM SEMSEC;
++------+-----+-----+
+| SSID | Sem | Sec |
++------+-----+-----+
+|  101 |   5 | A   |
+|  412 |   4 | C   |
+|  415 |   4 | C   |
+|  856 |   3 | B   |
+|  985 |   5 | A   |
++------+-----+-----+
+5 rows in set (0.000 sec)
+
+MariaDB [college]> SELECT * FROM STUDENT;
++------------+---------------+-------------+------------+--------+
+| USN        | SName         | Address     | Phone      | Gender |
++------------+---------------+-------------+------------+--------+
+| 4MH21CS030 | HAJIRA SUHANI | MYSORE      | 9865741249 | F      |
+| 4MH21CS050 | MEHWISH       | MYSORE      | 9632104589 | F      |
+| 4MH21CS055 | NOUMAN        | MYSOREE     | 9874563219 | M      |
+| 4MH21CS057 | NABHA NADIYA  | KUSHALNAGAR | 9632587419 | F      |
+| 4MH21CS102 | SUFIIYA SALAM | MYSORE      | 9654781239 | F      |
++------------+---------------+-------------+------------+--------+
+5 rows in set (0.000 sec)
+
+MariaDB [college]> DESC STUDENT;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| USN     | char(10)    | NO   | PRI | NULL    |       |
+| SName   | varchar(25) | NO   |     | NULL    |       |
+| Address | varchar(30) | NO   |     | NULL    |       |
+| Phone   | varchar(10) | YES  |     | NULL    |       |
+| Gender  | char(1)     | NO   |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.004 sec)
+
+MariaDB [college]> DESC SEMSEC;
++-------+---------+------+-----+---------+-------+
+| Field | Type    | Null | Key | Default | Extra |
++-------+---------+------+-----+---------+-------+
+| SSID  | int(11) | NO   | PRI | NULL    |       |
+| Sem   | int(11) | NO   |     | NULL    |       |
+| Sec   | char(1) | NO   |     | NULL    |       |
++-------+---------+------+-----+---------+-------+
+3 rows in set (0.009 sec)
+
+MariaDB [college]> DESC COURSE;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| Subcode | char(7)     | NO   | PRI | NULL    |       |
+| Title   | varchar(20) | YES  |     | NULL    |       |
+| Sem     | int(11)     | YES  |     | NULL    |       |
+| CREDITS | int(11)     | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+4 rows in set (0.010 sec)
+
+MariaDB [college]> DESC CLASS;
++-------+----------+------+-----+---------+-------+
+| Field | Type     | Null | Key | Default | Extra |
++-------+----------+------+-----+---------+-------+
+| USN   | char(10) | NO   | PRI | NULL    |       |
+| SSID  | int(11)  | YES  | MUL | NULL    |       |
++-------+----------+------+-----+---------+-------+
+2 rows in set (0.010 sec)
+
+MariaDB [college]> DESC IAMARKS;
++---------+----------+------+-----+---------+-------+
+| Field   | Type     | Null | Key | Default | Extra |
++---------+----------+------+-----+---------+-------+
+| USN     | char(10) | NO   | PRI | NULL    |       |
+| Subcode | char(7)  | NO   | PRI | NULL    |       |
+| SSID    | int(11)  | NO   | PRI | NULL    |       |
+| Test1   | int(11)  | NO   |     | NULL    |       |
+| Test2   | int(11)  | NO   |     | NULL    |       |
+| Test3   | int(11)  | NO   |     | NULL    |       |
+| FinalIA | double   | YES  |     | NULL    |       |
++---------+----------+------+-----+---------+-------+
+7 rows in set (0.003 sec)

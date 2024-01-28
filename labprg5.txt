@@ -1,0 +1,248 @@
+MariaDB [COLLEGE]> create database company;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [COLLEGE]> use company;
+Database changed
+MariaDB [company]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| college            |
+| company            |
+| cse                |
+| information_schema |
+| library            |
+| movies             |
+| mysql              |
+| orders             |
+| performance_schema |
+| phpmyadmin         |
+| test               |
+| xyz                |
++--------------------+
+12 rows in set (0.001 sec)
+
+MariaDB [company]> CREATE TABLE DEPARTMENT (
+    -> DNo INT PRIMARY KEY,
+    -> DName VARCHAR(20),
+    -> MgrSSN INT,
+    -> MgrStartDate DATE
+    -> );
+Query OK, 0 rows affected (0.018 sec)
+
+MariaDB [company]> CREATE TABLE EMPLOYEE (
+    -> SSN INT PRIMARY KEY,
+    -> FName VARCHAR(20) NOT NULL,
+    -> LName VARCHAR(20) NOT NULL,
+    -> Address VARCHAR(30),
+    -> Gender CHAR(1),
+    -> Salary REAL,
+    -> SuperSSN INT,
+    -> DNo INT,
+    -> FOREIGN KEY(SuperSSN) REFERENCES EMPLOYEE(SSN),
+    -> FOREIGN KEY(Dno) REFERENCES DEPARTMENT(DNo) );
+Query OK, 0 rows affected (0.017 sec)
+
+MariaDB [company]> ALTER TABLE DEPARTMENT
+    -> ADD FOREIGN KEY(MgrSSN) REFERENCES EMPLOYEE(SSN)
+    -> ;
+Query OK, 0 rows affected (0.036 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [company]> CREATE TABLE DLOCATION (
+    -> DNo INT,
+    -> DLoc VARCHAR(20),
+    -> PRIMARY KEY(DNo, DLoc),
+    -> FOREIGN KEY(DNo) REFERENCES DEPARTMENT(DNo)
+    -> );
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [company]> CREATE TABLE PROJECT (
+    -> PNo INT PRIMARY KEY,
+    -> PName VARCHAR(20),
+    -> PLocation VARCHAR(20),
+    -> DNo INT,
+    -> FOREIGN KEY(DNo) REFERENCES DEPARTMENT(DNo)
+    -> );
+Query OK, 0 rows affected (0.010 sec)
+
+MariaDB [company]> create table WORKS_ON(
+    -> SSN INT,
+    -> PNo INT,
+    -> Hours INT NOT NULL,
+    -> PRIMARY KEY(SSN, PNo),
+    -> FOREIGN KEY(SSN) REFERENCES EMPLOYEE(SSN),
+    -> FOREIGN KEY(PNo) REFERENCES PROJECT(PNo)
+    -> );
+Query OK, 0 rows affected (0.018 sec)
+
+ INSERT INTO EMPLOYEE(SSN, FName, Lname, Address, Gender, Salary) VALUES
+    -> (101, 'Jhon', 'Scott', 'Mysore','M', 5000),(102,'MEHWISH',' ','MYSORE','F', 250000),(103,'NABHA', 'NADIYA', 'KUSHALNAGAR','F',150000),(104,'NOUMAN', 'SHARIFF','MYSORE', 'M', 250000),(105,'SUDIYA','SALAM','BENGLURU',
+'F',1000000);
+Query OK, 5 rows affected (0.009 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+ INSERT INTO DEPARTMENT VALUES(1,'ACCOUNTS',101,'01-01-2022'),(2,'IT', 102,'01-01-2022'),(3,'
+ECE',103,'01-01-2022');
+Query OK, 3 rows affected, 3 warnings (0.010 sec)
+Records: 3  Duplicates: 0  Warnings: 3
+
+MariaDB [company]> UPDATE EMPLOYEE
+    -> SET SUPERSSN = 101, DNO = 1
+    -> WHERE SSN = 101;
+Query OK, 1 row affected (0.010 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [company]> UPDATE EMPLOYEE
+    -> SET SUPERSSN = 101, DNO = 2
+    -> WHERE SSN = 102;
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+UPDATE EMPLOYEE
+    -> SET SUPERSSN = 103 ,DNO = 3
+    -> WHERE SSN = 103;
+Query OK, 1 row affected (0.009 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [company]> INSERT INTO DLOCATION VALUES(1,'MYSORE'),(2,'BENGALURU'),(3,'MUMBAI');
+Query OK, 3 rows affected (0.010 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+ INSERT INTO PROJECT VALUES (1,'IoT','BLR',2),(2,'MICROPROCESSORS AND CONTROLLERS','MUMBAI',3
+);
+Query OK, 2 rows affected, 1 warning (0.009 sec)
+Records: 2  Duplicates: 0  Warnings: 1
+
+MariaDB [company]> INSERT INTO WORKS_ON VALUES (102, 1, 50), (103, 1, 40), (104, 2, 60), (105, 2, 100);
+Query OK, 4 rows affected (0.010 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [company]> SELECT * FROM DEPARTMENT;
++-----+----------+--------+--------------+
+| DNo | DName    | MgrSSN | MgrStartDate |
++-----+----------+--------+--------------+
+|   1 | ACCOUNTS |    101 | 0000-00-00   |
+|   2 | IT       |    102 | 0000-00-00   |
+|   3 | ECE      |    103 | 0000-00-00   |
++-----+----------+--------+--------------+
+3 rows in set (0.000 sec)
+
+MariaDB [company]> SELECT * FROM DLOCATION;
++-----+-----------+
+| DNo | DLoc      |
++-----+-----------+
+|   1 | MYSORE    |
+|   2 | BENGALURU |
+|   3 | MUMBAI    |
++-----+-----------+
+3 rows in set (0.000 sec)
+
+MariaDB [company]> SELECT * FROM EMPLOYEE;
++-----+---------+---------+-------------+--------+---------+----------+------+
+| SSN | FName   | LName   | Address     | Gender | Salary  | SuperSSN | DNo  |
++-----+---------+---------+-------------+--------+---------+----------+------+
+| 101 | Jhon    | Scott   | Mysore      | M      |    5000 |      101 |    1 |
+| 102 | MEHWISH |         | MYSORE      | F      |  250000 |      101 |    2 |
+| 103 | NABHA   | NADIYA  | KUSHALNAGAR | F      |  150000 |      103 |    3 |
+| 104 | NOUMAN  | SHARIFF | MYSORE      | M      |  250000 |     NULL | NULL |
+| 105 | SUDIYA  | SALAM   | BENGLURU    | F      | 1000000 |     NULL | NULL |
++-----+---------+---------+-------------+--------+---------+----------+------+
+5 rows in set (0.000 sec)
+
+MariaDB [company]> SELECT * FROM PROJECT;
++-----+----------------------+-----------+------+
+| PNo | PName                | PLocation | DNo  |
++-----+----------------------+-----------+------+
+|   1 | IoT                  | BLR       |    2 |
+|   2 | MICROPROCESSORS AND  | MUMBAI    |    3 |
++-----+----------------------+-----------+------+
+2 rows in set (0.001 sec)
+
+MariaDB [company]> SELECT * FROM WORKS_ON;
++-----+-----+-------+
+| SSN | PNo | Hours |
++-----+-----+-------+
+| 102 |   1 |    50 |
+| 103 |   1 |    40 |
+| 104 |   2 |    60 |
+| 105 |   2 |   100 |
++-----+-----+-------+
+4 rows in set (0.000 sec)
+
+QUERY 1:
+MariaDB [COMPANY]> (SELECT DISTINCT P.PNo
+    ->  FROM PROJECT P, DEPARTMENT D, EMPLOYEE E
+    ->  WHERE E.DNo = D.DNo AND D.MgrSSN = E.SSN AND E.LName = 'Scott')
+    -> UNION
+    -> (SELECT DISTINCT P.Pno
+    ->  FROM PROJECT P, WORKS_ON W, EMPLOYEE E
+    ->  WHERE P.PNo = W.PNo AND E.SSN = W.SSN AND E.LName = 'Scott');
++-----+
+| PNo |
++-----+
+|   1 |
+|   2 |
++-----+
+2 rows in set (0.010 sec)
+
+QUERY 2:;
+MariaDB [COMPANY]> SELECT E.FName, E.LName, 1.1 * E.Salary AS NewSalary
+    -> FROM EMPLOYEE E, WORKS_ON W, PROJECT P
+    -> WHERE E.SSN = W.SSN AND W.PNO = P.PNO AND P.PName = 'IoT';
++---------+--------+-----------+
+| FName   | LName  | NewSalary |
++---------+--------+-----------+
+| MEHWISH |        |    275000 |
+| NABHA   | NADIYA |    165000 |
++---------+--------+-----------+
+2 rows in set (0.001 sec)
+
+QUERY 3:
+MariaDB [COMPANY]> SELECT SUM(E.Salary), MAX(E.Salary), MIN(E.Salary), AVG(E.Salary)
+    -> FROM EMPLOYEE E, DEPARTMENT D
+    -> WHERE E.DNO = D.DNO AND D.DName = 'Accounts';
++---------------+---------------+---------------+---------------+
+| SUM(E.Salary) | MAX(E.Salary) | MIN(E.Salary) | AVG(E.Salary) |
++---------------+---------------+---------------+---------------+
+|          5000 |          5000 |          5000 |          5000 |
++---------------+---------------+---------------+---------------+
+1 row in set (0.001 sec)
+
+QUERY 4:
+MariaDB [COMPANY]> SELECT E.FName, E.Lname
+    -> FROM EMPLOYEE E
+    -> WHERE NOT EXISTS (
+    -> SELECT Pno
+    -> FROM PROJECT P
+    -> WHERE DNo = 5 AND PNo NOT IN (
+    -> SELECT PNO
+    -> FROM WORKS_ON W
+    -> WHERE E.SSN = SSN
+    -> ));
++---------+---------+
+| FName   | Lname   |
++---------+---------+
+| Jhon    | Scott   |
+| MEHWISH |         |
+| NABHA   | NADIYA  |
+| NOUMAN  | SHARIFF |
+| SUDIYA  | SALAM   |
++---------+---------+
+5 rows in set (0.001 sec)
+
+QUERY 5:
+MariaDB [COMPANY]> SELECT D.DNo, COUNT(*)
+    -> FROM DEPARTMENT D, EMPLOYEE E
+    -> WHERE D.DNO = E.DNO AND E.Salary > 60000 AND D.DNo IN
+    ->     (SELECT E.DNo
+    ->      FROM EMPLOYEE E
+    ->      GROUP BY E.DNo
+    ->      HAVING COUNT(*) >= 1)
+    -> GROUP BY D.DNo;
++-----+----------+
+| DNo | COUNT(*) |
++-----+----------+
+|   2 |        1 |
+|   3 |        1 |
++-----+----------+
+2 rows in set (0.001 sec)
