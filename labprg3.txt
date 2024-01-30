@@ -60,14 +60,14 @@ MariaDB [movies]> SELECT M.Mov_Title, COUNT(R.Rev_Stars) AS NumStars, MAX(R.Rev_
 +---------------------+----------+--------------+
 4 rows in set (0.000 sec)
 
-MariaDB [movies]>
+QUERY 5:
+
 MariaDB [movies]> UPDATE RATING
     -> SET Rev_Stars = 5
     -> WHERE Mov_id IN (SELECT Mov_id FROM MOVIES WHERE Dir_id IN (SELECT Dir_id FROM DIRECTOR WHERE Dir_Name = 'Steven Spielberg'));
 Query OK, 2 rows affected (0.009 sec)
 Rows matched: 2  Changed: 2  Warnings: 0
 
-QUERY 5:
 MariaDB [movies]> select * from rating;
 +--------+-----------+
 | Mov_id | Rev_Stars |
