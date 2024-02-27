@@ -1,0 +1,97 @@
+MariaDB [(none)]> create database prg6;
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [(none)]> use prg6;
+Database changed
+MariaDB [prg6]> CREATE TABLE STUDENT(
+    -> ROL_NO INT PRIMARY KEY,
+    -> NAME VARCHAR(25) NOT NULL,
+    -> AGE INT NOT NULL,
+    -> PHONE VARCHAR(10),
+    -> ADDRESS VARCHAR(25));
+Query OK, 0 rows affected (0.017 sec)
+
+MariaDB [prg6]> INSERT INTO STUDENT VALUES(1,'HARSH',18,985647135,'DELHI'),(2,'PRATIK', 19,965412359,'BIHAR'),(3,'RIHANA', 20,9874568236,'SILGURI'),(4,'DEEP',18,9875641236,'RAMNAGAR'),(5,'SAPTARHI',19,8745632158,'KOLKATA');
+Query OK, 5 rows affected (0.007 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [prg6]> CREATE TABLE STUDENT_COURSE(
+    -> COURSE_ID INT NOT NULL,
+    -> ROL_NO INT,
+    -> FOREIGN KEY (ROL_NO) REFERENCES STUDENT(ROL_NO));
+Query OK, 0 rows affected (0.016 sec)
+
+MariaDB [prg6]> INSERT INTO STUDENT_COURSE VALUES(1,1),(2,2),(3,3),(1,4),(2,5);
+Query OK, 5 rows affected (0.009 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [prg6]> SELECT * FROM STUDENT;
++--------+----------+-----+------------+----------+
+| ROL_NO | NAME     | AGE | PHONE      | ADDRESS  |
++--------+----------+-----+------------+----------+
+|      1 | HARSH    |  18 | 985647135  | DELHI    |
+|      2 | PRATIK   |  19 | 965412359  | BIHAR    |
+|      3 | RIHANA   |  20 | 9874568236 | SILGURI  |
+|      4 | DEEP     |  18 | 9875641236 | RAMNAGAR |
+|      5 | SAPTARHI |  19 | 8745632158 | KOLKATA  |
++--------+----------+-----+------------+----------+
+5 rows in set (0.000 sec)
+
+MariaDB [prg6]> SELECT * FROM STUDENT_COURSE;
++-----------+--------+
+| COURSE_ID | ROL_NO |
++-----------+--------+
+|         1 |      1 |
+|         2 |      2 |
+|         3 |      3 |
+|         1 |      4 |
+|         2 |      5 |
++-----------+--------+
+5 rows in set (0.000 sec)
+
+
+MariaDB [prg6]> SELECT STUDENT.ROL_NO, STUDENT.NAME,STUDENT.AGE,STUDENT_COURSE
+.COURSE_ID,STUDENT_COURSE.ROL_NO
+    -> FROM STUDENT
+    -> INNER JOIN STUDENT_COURSE
+    -> ON STUDENT.ROL_NO = STUDENT_COURSE.ROL_NO;
++--------+----------+-----+-----------+--------+
+| ROL_NO | NAME     | AGE | COURSE_ID | ROL_NO |
++--------+----------+-----+-----------+--------+
+|      1 | HARSH    |  18 |         1 |      1 |
+|      2 | PRATIK   |  19 |         2 |      2 |
+|      3 | RIHANA   |  20 |         3 |      3 |
+|      4 | DEEP     |  18 |         1 |      4 |
+|      5 | SAPTARHI |  19 |         2 |      5 |
++--------+----------+-----+-----------+--------+
+5 rows in set (0.001 sec)
+
+MariaDB [prg6]> SELECT STUDENT.ROL_NO, STUDENT.NAME,STUDENT_COURSE.COURSE_ID
+    -> FROM STUDENT
+    -> LEFT JOIN STUDENT_COURSE
+    -> ON STUDENT_COURSE.ROL_NO = STUDENT.ROL_NO;
++--------+----------+-----------+
+| ROL_NO | NAME     | COURSE_ID |
++--------+----------+-----------+
+|      1 | HARSH    |         1 |
+|      2 | PRATIK   |         2 |
+|      3 | RIHANA   |         3 |
+|      4 | DEEP     |         1 |
+|      5 | SAPTARHI |         2 |
++--------+----------+-----------+
+5 rows in set (0.000 sec)
+
+MariaDB [prg6]> SELECT STUDENT.ROL_NO, STUDENT.NAME,STUDENT.AGE,STUDENT_COURSE.COURSE_ID,STUDENT_COURSE.ROL_NO
+    -> FROM STUDENT
+    -> RIGHT JOIN STUDENT_COURSE
+    -> ON STUDENT_COURSE.ROL_NO = STUDENT.ROL_NO;
++--------+----------+------+-----------+--------+
+| ROL_NO | NAME     | AGE  | COURSE_ID | ROL_NO |
++--------+----------+------+-----------+--------+
+|      1 | HARSH    |   18 |         1 |      1 |
+|      2 | PRATIK   |   19 |         2 |      2 |
+|      3 | RIHANA   |   20 |         3 |      3 |
+|      4 | DEEP     |   18 |         1 |      4 |
+|      5 | SAPTARHI |   19 |         2 |      5 |
++--------+----------+------+-----------+--------+
+5 rows in set (0.000 sec)
